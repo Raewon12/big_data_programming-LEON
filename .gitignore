@@ -1,2 +1,32 @@
+# .ipynb, .png 파일만 업로드 — 나머지 전부 제외
+
+# 데이터
+processed_data/
+*.csv
+
+# 문서
+*.md
+*.pdf
+*.txt
+
+# 이미지 (png 제외)
+*.jpeg
+*.jpg
+images/
+images.zip
+
+# 임베딩
+*.npy
+
+# 환경
 .venv/
 .claude/
+__pycache__/
+*.pyc
+
+# 주피터 체크포인트
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
