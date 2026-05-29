@@ -1,2 +1,12 @@
 .venv/
 .claude/
+
+# 실험 산출물 (용량 큰 파일은 커밋하지 않음)
+artifacts/
+*.npy
+*.pt
+*.pkl
+*.vec
+*.bin
+cc.ko.300.*
+

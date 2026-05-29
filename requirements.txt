@@ -1,0 +1,8 @@
+# RunPod PyTorch 템플릿에는 torch가 이미 설치됨 (torch는 재설치하지 말 것)
+transformers
+scikit-learn
+pandas
+numpy
+matplotlib
+gensim
+tqdm
