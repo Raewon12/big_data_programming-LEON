@@ -1,5 +1,5 @@
 # RunPod PyTorch 템플릿에는 torch가 이미 설치됨 (torch는 재설치하지 말 것)
-transformers
+transformers==4.44.2
 scikit-learn
 pandas
 numpy
