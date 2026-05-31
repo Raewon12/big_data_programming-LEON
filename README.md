@@ -329,6 +329,18 @@ P_final = α · P(TF-IDF + LR) + (1 − α) · P(BERT + MLP)
 - 전체 test 최고 성능은 **Late Fusion(0.6561)** 과 **TextCNN(0.6556)** 으로 사실상 동률
 - Late Fusion은 BERT+MLP 단독보다 **+0.077** 개선 → 문맥 신호를 LR과 결합할 때만 BERT 계열의 가치가 드러남 (H3, 7.3 논의)
 
+### 6.1.1 본 실험 공식 산출물 (`artifacts/`)
+
+RunPod 실험 중 노트북이 **자동 저장**한 공식 결과 그래프 2종이다. (스크린샷 `report_images/`와 별도)
+
+**① BERT+MLP Confusion Matrix** — `bert/bert_mlp.ipynb` 실행 시 저장 (test 4,261건, F1-macro 0.579)
+
+![BERT+MLP Confusion Matrix](artifacts/confusion_matrix_bert_mlp.png)
+
+**② Late Fusion α vs val F1 그래프** — `hybrid/late_fusion.ipynb` 실행 시 저장 (best α=0.8)
+
+![Late Fusion α vs val F1](artifacts/late_fusion_alpha.png)
+
 ### 6.2 TextCNN 클래스별 성능 (전체 test 4,261건)
 
 노트북 [`textcnn/textcnn.ipynb`](textcnn/textcnn.ipynb) 기준. fastText 사전학습 임베딩 + TextCNN으로 **Macro F1 0.6556**, baseline(0.6347) **상회**.
@@ -385,11 +397,9 @@ val에서 0.6003까지 올랐으나 test에서는 0.5792로 하락 → frozen BE
 | **형사B(일반형)** | 0.5861 | 0.4381 | **0.5014** | 614 |
 | **macro avg** | 0.5569 | 0.6724 | **0.5792** | 4,261 |
 
-**Confusion Matrix (노트북 자동 저장, F1-macro 0.579):**
+**Confusion Matrix (위 [6.1.1①](#611-본-실험-공식-산출물-artifacts)와 동일 파일):**
 
-아래 그림은 `bert_mlp.ipynb` 실행 시 `artifacts/confusion_matrix_bert_mlp.png`로 저장된 **공식 결과물**이다. 대각선(정분류)은 특허/저작권·근로자 등에서 두드러지나, **기업→민사·형사B→형사A** 오분류가 baseline과 동일하게 나타난다.
-
-![BERT+MLP Confusion Matrix](artifacts/confusion_matrix_bert_mlp.png)
+`artifacts/confusion_matrix_bert_mlp.png` — 대각선(정분류)은 특허/저작권·근로자 등에서 두드러지나, **기업→민사·형사B→형사A** 오분류가 baseline과 동일하게 나타난다.
 
 ### 6.4 Late Fusion: α 탐색 및 클래스별 성능
 
@@ -401,11 +411,9 @@ val에서 0.6003까지 올랐으나 test에서는 0.5792로 하락 → frozen BE
 
 α=0.0(MLP만 0.6003) → α=0.8(최적 0.6669) → α=1.0(LR만 0.6559). **LR 가중치 80%** 일 때 val 최고 → 어휘 신호가 주력, BERT+MLP는 보조.
 
-**α vs val F1 그래프 (노트북 자동 저장, 공식 결과물):**
+**α vs val F1 그래프 (위 [6.1.1②](#611-본-실험-공식-산출물-artifacts)와 동일 파일):**
 
-`late_fusion.ipynb` 실행 시 `artifacts/late_fusion_alpha.png`로 저장된다. α=0.8에서 val F1 peak 후 α=1.0(LR 단독)에서 급락 → MLP 신호를 **소량(20%)** 섞는 것이 최적.
-
-![Late Fusion α vs val F1 (공식 산출물)](artifacts/late_fusion_alpha.png)
+`artifacts/late_fusion_alpha.png` — α=0.8에서 val F1 peak, α=1.0(LR 단독)에서 급락 → MLP 신호 **20%** 보조가 최적.
 
 **최종 test 평가 (α=0.8, Accuracy 0.7073 / Macro F1 0.6561):**
 
