@@ -76,15 +76,38 @@ def load_json_records(json_dir: Path) -> pd.DataFrame:
     return pd.DataFrame(records)
 
 
-def drop_missing(df: pd.DataFrame) -> pd.DataFrame:
+def drop_missing(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """결측 제거 및 클래스별 제거율 통계 반환."""
     before = len(df)
-    df = df.dropna(subset=["jdgmn", "summ_pass", "class_name"])
-    df = df[df["jdgmn"].astype(str).str.strip() != ""]
-    df = df[df["summ_pass"].astype(str).str.strip() != ""]
-    df = df[df["class_name"].astype(str).str.strip() != ""]
-    after = len(df)
-    print(f"결측 제거: {before} → {after} ({before - after}건 제거)")
-    return df.reset_index(drop=True)
+    valid = (
+        df["jdgmn"].notna()
+        & df["summ_pass"].notna()
+        & df["class_name"].notna()
+        & (df["jdgmn"].astype(str).str.strip() != "")
+        & (df["summ_pass"].astype(str).str.strip() != "")
+        & (df["class_name"].astype(str).str.strip() != "")
+    )
+    removed = df[~valid]
+    kept = df[valid].reset_index(drop=True)
+    after = len(kept)
+    print(f"결측 제거: {before} → {after} ({before - after}건 제거, {100*(before-after)/before:.1f}%)")
+
+    before_counts = df["class_name"].value_counts()
+    removed_counts = removed["class_name"].value_counts()
+    stats = []
+    for cls in sorted(before_counts.index):
+        b = int(before_counts.get(cls, 0))
+        r = int(removed_counts.get(cls, 0))
+        rate = 100.0 * r / b if b else 0.0
+        stats.append({"class_name": cls, "before": b, "removed": r, "kept": b - r, "removal_rate_pct": rate})
+    removal_stats = pd.DataFrame(stats)
+    print("\n=== 클래스별 결측 제거율 ===")
+    for row in stats:
+        print(
+            f"  {row['class_name']}: {row['before']} → {row['kept']} "
+            f"(제거 {row['removed']}, {row['removal_rate_pct']:.1f}%)"
+        )
+    return kept, removal_stats
 
 
 def apply_cleaning(df: pd.DataFrame) -> pd.DataFrame:
@@ -160,7 +183,7 @@ def main() -> int:
     df = load_json_records(args.json_dir)
     print_class_distribution(df, "JSON 추출 직후 클래스 분포")
 
-    df = drop_missing(df)
+    df, removal_stats = drop_missing(df)
     df = apply_cleaning(df)
 
     label_mapping = build_label_mapping(df)
@@ -178,13 +201,14 @@ def main() -> int:
         f"train {len(train_df)} / val {len(val_df)} / test {len(test_df)}"
     )
 
+    removal_stats.to_csv(args.out_dir / "removal_stats_by_class.csv", index=False)
     label_mapping.to_csv(args.out_dir / "label_mapping.csv", index=False)
     train_df.to_csv(args.out_dir / "train.csv", index=False)
     val_df.to_csv(args.out_dir / "val.csv", index=False)
     test_df.to_csv(args.out_dir / "test.csv", index=False)
 
     print(f"\n저장 완료: {args.out_dir}")
-    print("  label_mapping.csv, train.csv, val.csv, test.csv")
+    print("  label_mapping.csv, removal_stats_by_class.csv, train.csv, val.csv, test.csv")
     return 0
 
 
