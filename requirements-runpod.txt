@@ -1,0 +1,8 @@
+# RunPod PyTorch 템플릿 전용 (torch는 템플릿에 사전 설치됨 — 재설치 금지)
+transformers==4.44.2
+scikit-learn
+pandas
+numpy
+matplotlib
+gensim
+tqdm

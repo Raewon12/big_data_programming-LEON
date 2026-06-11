@@ -1,8 +1,13 @@
-# RunPod PyTorch 템플릿에는 torch가 이미 설치됨 (torch는 재설치하지 말 것)
-transformers==4.44.2
-scikit-learn
-pandas
-numpy
-matplotlib
-gensim
-tqdm
+# 공통 의존성 안내
+#
+# 본 프로젝트 본 실험은 RunPod PyTorch 템플릿에서 수행하였다.
+# torch는 RunPod 템플릿에 사전 설치되어 있어 requirements-runpod.txt에 포함하지 않았다.
+#
+# RunPod / GPU (권장, 본 실험 환경):
+#   pip install -r requirements-runpod.txt
+#
+# 로컬 CPU:
+#   pip install -r requirements-cpu.txt
+#
+# 아래는 RunPod 기준 최소 패키지 목록 (하위 호환용)
+-r requirements-runpod.txt

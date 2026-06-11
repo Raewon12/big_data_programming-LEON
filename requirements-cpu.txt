@@ -1,0 +1,12 @@
+# 로컬 CPU 환경용 (PyTorch CPU 버전 포함)
+# 설치: pip install -r requirements-cpu.txt
+# CUDA GPU 사용 시 https://pytorch.org 에서 환경에 맞는 torch를 별도 설치 후
+#       transformers 이하 패키지만 requirements-runpod.txt 기준으로 설치하세요.
+torch>=2.0.0
+transformers==4.44.2
+scikit-learn
+pandas
+numpy
+matplotlib
+gensim
+tqdm
